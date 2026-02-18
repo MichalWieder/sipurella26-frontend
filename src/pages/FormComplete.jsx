@@ -1,18 +1,18 @@
-// UserForm.jsx
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { storyService } from '../services/story.service.js'
-import { loadSip, updateSip } from '../store/actions/sip.actions';
+import { loadSip, updateSip } from '../store/actions/sip.actions.js';
 
-import { LOADING_START, LOADING_DONE } from '../store/reducers/system.reducer'
-import { SET_SIP } from '../store/reducers/sip.reducer'
+import { LOADING_START, LOADING_DONE } from '../store/reducers/system.reducer.js'
+import { SET_SIP } from '../store/reducers/sip.reducer.js'
 
 import { Loader } from "../cmps/Loader.jsx"
+import { ImagePrompts } from "../cmps/ImagePrompts.jsx"
 
 
-export function UserComplete () {
+export function FormComplete () {
 const isLoading = useSelector(storeState => storeState.systemModule.isLoading)
 const sip = useSelector(state => state.sipModule.sip)    
 const { sipId } = useParams()
@@ -62,6 +62,9 @@ if (!sip || isLoading) return <Loader text="בונים את הסיפורלה ש�
             </pre>
             ))}
         </div>
+
+
+        <ImagePrompts sipId={sip.Id}/>
     </section>
   )
 }

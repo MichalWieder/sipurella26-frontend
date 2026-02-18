@@ -14,9 +14,10 @@ import { UserDetails } from './pages/UserDetails'
 import { AppHeader } from './cmps/AppHeader'
 import { AppFooter } from './cmps/AppFooter'
 import { UserMsg } from './cmps/UserMsg.jsx'
+import { ImagePrompts } from './cmps/ImagePrompts.jsx'
 import { LoginSignup, Login, Signup } from './pages/LoginSignup.jsx'
-import { UserForm } from './pages/UserForm.jsx'
-import { UserComplete } from './pages/UserComplete.jsx'
+import { Form } from './pages/Form.jsx'
+import { FormComplete } from './pages/FormComplete.jsx'
 
 
 export function RootCmp() {
@@ -38,8 +39,9 @@ export function RootCmp() {
                     <Route path="chat" element={<ChatApp />} />
                     <Route path="admin" element={<AdminIndex />} />
                     <Route path="auth" element={<LoginSignup />} />
-                    <Route path="build" element={<UserForm />} />
-                    <Route path="complete/:sipId" element={<UserComplete />} />
+                    <Route path="build" element={<Form />} />
+                    <Route path="complete/:sipId" element={<FormComplete />} />
+                    <Route path="complete/:sipId/prompts" element={<ImagePrompts />} />
                     <Route path="login" element={<Login />} />
                     <Route path="signup" element={<Signup />} />
                 </Routes>

@@ -1,4 +1,4 @@
-// UserForm.jsx
+
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
@@ -8,7 +8,7 @@ import {FormStep1} from '../cmps/FormStep1';
 import {FormStep2} from '../cmps/FormStep2';
 import {FormStep3} from '../cmps/FormStep3';
 
-export function UserForm () {
+export function Form () {
   const [step, setStep] = useState(1)
   const sip = useSelector(storeState => storeState.sipModule.sip)
   const sips = useSelector(storeState => storeState.sipModule.sips)
