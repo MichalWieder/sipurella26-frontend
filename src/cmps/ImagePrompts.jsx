@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { httpService } from "../services/http.service"
+// import { buildCharacterBlock, buildCref } from '../services/mjPrompt.service'
 import { Loader } from "../cmps/Loader"
 
 export function ImagePrompts({ sipId: sipIdProp }) {
@@ -12,11 +13,7 @@ export function ImagePrompts({ sipId: sipIdProp }) {
   const [errMsg, setErrMsg] = useState("")
 
   const labels = useMemo(() => {
-    // We expect 13 prompts:
-    // 0 cover
-    // 1..10 paragraphs 1..10
-    // 11 wish
-    // 12 back cover
+    // 13 prompts: 0 cover, 1-10 paragraphs, 11 wish, 12 back cover
     const arr = []
     arr.push("Cover")
     for (let i = 1; i <= 10; i++) arr.push(`Paragraph ${i}`)
@@ -84,6 +81,8 @@ export function ImagePrompts({ sipId: sipIdProp }) {
       </section>
     )
   }
+
+  
 
   return (
     <section className="image-prompts">

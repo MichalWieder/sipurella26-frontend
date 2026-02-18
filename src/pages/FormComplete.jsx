@@ -32,18 +32,18 @@ useEffect(() => {
 
 
  async function generateStory() {
-     if (!sip?._id) return
-     if (sip.story) return
+    if (!sip?._id) return
+    if (sip.story) return
     try {
-    dispatch({type: LOADING_START})
+        dispatch({type: LOADING_START})
 
-    const updateSip = await storyService.generate(sip._id)
-    dispatch({ type: SET_SIP, sip: updateSip })
+        const updateSip = await storyService.generate(sip._id)
+        dispatch({ type: SET_SIP, sip: updateSip })
 
 
-    dispatch({type: LOADING_DONE})
+        dispatch({type: LOADING_DONE})
     } catch (err) {
-    console.error("Story generation failed", err)
+        console.error("Story generation failed", err)
     }
 }
 

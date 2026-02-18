@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 
 import { FormStep2_Questions } from './FormStep2_Questions.jsx'
 
+const STORAGE_KEY = "form_step2"
 
 export function FormStep2 ({ onSubmit, addStepParam, back }) {
   
@@ -10,7 +11,18 @@ export function FormStep2 ({ onSubmit, addStepParam, back }) {
   const [questions, setQuestions] = useState(
     ["איך הכרתם?", "איזה סוג של זוג אתם? מה מספרים עליכם", "מה התחביבים שלכם? (ביחד ולחוד)", "יש עוד משהו שהיית רוצה לשתף? שמות חיבה, בדיחות פרטיות, סיפורים מצחיקים"])
 
-  const defaultValues = {
+  // const defaultValues = {
+  //   details: [
+  //     { text: "", recordUrl: "" },
+  //     { text: "", recordUrl: "" },
+  //     { text: "", recordUrl: "" },
+  //     { text: "", recordUrl: "" },
+  //   ],
+  // }
+  // const { handleSubmit, register, setValue } = useForm({shouldUnregister: false, defaultValues})
+
+
+  const defaultValues = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {
     details: [
       { text: "", recordUrl: "" },
       { text: "", recordUrl: "" },
@@ -19,12 +31,22 @@ export function FormStep2 ({ onSubmit, addStepParam, back }) {
     ],
   }
 
+  const { register, handleSubmit, setValue, watch } = useForm({
+    shouldUnregister: false,
+    defaultValues,
+  })
 
-  const { handleSubmit, register, setValue } = useForm({shouldUnregister: false, defaultValues})
 
   useEffect(() => {
             addStepParam()
     }, [])
+
+  useEffect(() => {
+    const sub = watch((values) => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(values))
+    })
+    return () => sub.unsubscribe()
+  }, [watch])
 
   
 
@@ -49,7 +71,13 @@ export function FormStep2 ({ onSubmit, addStepParam, back }) {
 
 
     <button type="submit">המשך</button>
+      {back && (
+          <button type="button" onClick={back}>
+            חזרה
+          </button>
+        )}
       </form>
+
     </section>
     )
 

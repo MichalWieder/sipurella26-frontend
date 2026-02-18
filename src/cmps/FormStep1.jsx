@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
+const STORAGE_KEY = "form_step1"
+
+
 export function FormStep1 ({ onSubmit, addStepParam }) {
-  const { register, handleSubmit } = useForm()
+  // const { register, handleSubmit } = useForm()
+  const { register, handleSubmit, watch } = useForm({
+    defaultValues: JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")
+  })
+
 
   useEffect(() => {
           addStepParam()
   }, [])
+
+  useEffect(() => {
+    const sub = watch((values) => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(values))
+    })
+    return () => sub.unsubscribe()
+  }, [watch])
 
 
   return (
@@ -36,6 +50,11 @@ export function FormStep1 ({ onSubmit, addStepParam }) {
       <div>
         <label htmlFor="relation"></label>
         <input placeholder="מה הקשר ביניכם?" {...register("relation")} />
+      </div>
+
+      <div>
+        <label htmlFor="charactersCount"></label>
+        <input type="number" min="1" max="7" placeholder="כמה דמויות ראשיות יש בסיפור?" {...register("charactersCount")} />
       </div>
 
       <div>

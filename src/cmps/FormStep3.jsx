@@ -7,15 +7,36 @@ import { uploadService } from "../services/upload.service"
 import { LOADING_START, LOADING_DONE } from '../store/reducers/system.reducer'
 
 import { Loader } from "./Loader"
+import { ImgUploader } from "./ImgUploader"
+
+const STORAGE_KEY = "form_step3"
+
 
 export function FormStep3 ({ onSubmit, addStepParam, back }) {
   const sip = useSelector(storeState => storeState.sipModule.sip)
   const isLoading = useSelector(storeState => storeState.systemModule.isLoading)
-  const { register, handleSubmit } = useForm()
-  const [images, setImages] = useState([])
-
+  const [characterImgs, setCharacterImgs] = useState({})
+  const [generalImgs, setGeneralImgs] = useState([])
   const [isUploading, setIsUploading] = useState(false)
-  const [uploadErr, setUploadErr] = useState("")
+
+  const buildDefaultCharacters = (count = 2) =>
+  Array.from({ length: count }, (_, i) => ({
+    id: `c${i + 1}`,
+    role: "main",
+    name: "",
+    refImg: "",
+    appearance: null,
+  }))
+  
+  const defaultValues = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {
+  wish: "",
+  backCover: "",
+  characters: buildDefaultCharacters(sip?.charactersCount || 2)
+}
+  const { register, handleSubmit, setValue, watch } = useForm({defaultValues})
+
+    // const { handleSubmit, register, setValue } = useForm({shouldUnregister: false, defaultValues})
+
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -24,52 +45,43 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
     addStepParam()
   }, [])
 
-  const handleFiles = (files) => {
-    const fileArray = Array.from(files)
-    const validImages = fileArray.filter((file) => file.type.startsWith("image/"))
-
-
-    // limit to 20 images
-    const newImages = [...images, ...validImages].slice(0, 20);
-    setImages(newImages)
-  }
-
-  const handleDrop = (ev) => {
-    ev.preventDefault();
-    handleFiles(ev.dataTransfer.files);
-  }
-
-  const handleSelect = (ev) => {
-    handleFiles(ev.target.files);
-  }
-
-  const removeImage = (index) => {
-    setImages(images.filter((_, i) => i !== index));
-  }
-
-  const previews = useMemo(() => {
-    return images.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-    }))
-  }, [images])
-
-  // Cleanup previews
   useEffect(() => {
-    return () => {
-      previews.forEach((p) => URL.revokeObjectURL(p.url))
-    }
-  }, [previews])
+    const sub = watch((values) => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(values))
+    })
+    return () => sub.unsubscribe()
+  }, [watch])
 
 
   async function onFinalSubmit(data) {
     dispatch({type: LOADING_START})
-    const imgUrls = images.length ? await uploadService.uploadImages(images) : []
-    await onSubmit({ ...data, imgs: imgUrls })
+    
+    // upload images to cloudinary and add to sip.images & characters
+    const generalImgUrls = generalImgs.length ? await uploadService.uploadImages(generalImgs) : []
+    const updatedCharacters = await Promise.all(
+    data.characters.map(async (char, idx) => {
+      let refImgUrl = ""
+      const file = characterImgs[idx]
 
+      if (file) {
+        const uploaded = await uploadService.uploadImages([file]) // wrap in array
+        refImgUrl = uploaded[0] || ""
+      }
+
+      return {...char, refImg: refImgUrl}
+    })
+  )
+
+    await onSubmit({ ...data, imgs: generalImgUrls, characters: updatedCharacters })
+
+    localStorage.removeItem("form_step")
+    localStorage.removeItem("form_step1")
+    localStorage.removeItem("form_step2")
+    localStorage.removeItem("form_step3")
+    
     dispatch({type: LOADING_DONE})
-    // navigate(`/complete/`)
-    navigate(`/complete/${sip._id}`)
+    navigate(`/complete/`)
+    // navigate(`/complete/${sip._id}`)
   }
 
   
@@ -95,42 +107,41 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
           />
         </div>
 
-        <section className="upload-box" onDragOver={(ev) => ev.preventDefault()} onDrop={handleDrop}>
-          <label htmlFor="imgs" className="upload-area">
-            <p>
-              📸 Drag and drop up to 20 images here
-              <br />
-              or click to select from your computer
-            </p>
-            <input
-              id="imgs"
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleSelect}
-              style={{ display: "none" }}
+        {watch("characters")?.map((char, idx) => (
+          <div key={char.id}>
+            <h2>Character {idx + 1}</h2>
+
+            <ImgUploader
+              images={characterImgs[idx] ? [characterImgs[idx]] : []}
+              setImages={(imgs) =>
+                setCharacterImgs(prev => ({
+                  ...prev,
+                  [idx]: imgs[0] || null
+                }))
+              }
+              inputId={`character-imgs-${idx}`}  
+              multiple={false}                
+              limit={1}
             />
-          </label>
+          </div>
+        ))}
+         {/* <ImgUploader images={characterImg} setImages={setCharacterImg}/> */}
 
-          {isLoading 
+        {isLoading 
           ? <Loader />
+          : <>
+            <h2>Images</h2>
+            <ImgUploader
+              images={generalImgs}
+              setImages={setGeneralImgs}
+              inputId="general-imgs"                
+              multiple={true}
+              limit={20}
+            />
+          </>
+        }
 
-          : <div className="preview-grid">
-            {previews.map((p, idx) => (
-              <div key={p.url} className="preview-item">
-                <img src={p.url} alt={`preview-${idx}`} className="preview-img" />
-                <button type="button" className="remove-btn" onClick={() => removeImage(idx)}>
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>}
-
-          {images.length >= 20 && <p className="limit-msg">You can upload up to 20 images only.</p>}
-        </section>
-
-        {uploadErr && <p style={{ color: "red" }}>{uploadErr}</p>}
-
+        
         <button type="submit" disabled={isUploading}>
           {isUploading ? "מעלה..." : "שליחה"}
         </button>

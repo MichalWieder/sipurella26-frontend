@@ -12,6 +12,7 @@ function getEmptySip() {
 		email: '',
 		receiverName: '',
 		relation: '',
+		charactersCount: 1,
         event: '',
         story: [],
         details: [
@@ -19,6 +20,9 @@ function getEmptySip() {
 			{ text: '', recordUrl: '' }, // q2
 			{ text: '', recordUrl: '' }, // q3
 			{ text: '', recordUrl: '' }, // q4
+		],
+		characters: [
+			{ id: "c1", role: "main", name: "", refImg: [], appearance: null }
 		],
         wish: '',
         backCover: '',
