@@ -80,8 +80,8 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
     localStorage.removeItem("form_step3")
     
     dispatch({type: LOADING_DONE})
-    navigate(`/complete/`)
-    // navigate(`/complete/${sip._id}`)
+    // navigate(`/complete/`)
+    navigate(`/complete/${sip._id}`)
   }
 
   

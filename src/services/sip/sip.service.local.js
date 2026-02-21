@@ -45,7 +45,8 @@ async function save(sip) {
             wish: sip.wish,
             backCover: sip.backCover,
             imgs: sip.imgs,
-            characters: sip.characters
+            characters: sip.characters,
+            prompts: sip.prompts
         }
         savedSip = await storageService.put(STORAGE_KEY, sipToSave)
     } else {
@@ -61,7 +62,8 @@ async function save(sip) {
             wish: sip.wish,
             backCover: sip.backCover,
             imgs: sip.imgs,
-            characters: sip.characters
+            characters: sip.characters,
+            prompts: sip.prompts,
             // Later, owner is set by the backend
             // owner: userService.getLoggedinUser(),
             // msgs: []

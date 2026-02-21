@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useState } from "react"
+import { useSelector, useDispatch } from 'react-redux'
+
 import { useParams } from "react-router-dom"
 import { httpService } from "../services/http.service"
+import { charactersService } from "../services/characters.service"
+import { imagesService } from "../services/images.service"
+import { loadSip } from '../store/actions/sip.actions'
 // import { buildCharacterBlock, buildCref } from '../services/mjPrompt.service'
 import { Loader } from "../cmps/Loader"
 
-export function ImagePrompts({ sipId: sipIdProp }) {
-  const params = useParams()
-  const sipId = sipIdProp || params.sipId
-
+export function ImagePrompts({ sipId }) {
   const [prompts, setPrompts] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [errMsg, setErrMsg] = useState("")
 
   const labels = useMemo(() => {
-    // 13 prompts: 0 cover, 1-10 paragraphs, 11 wish, 12 back cover
     const arr = []
     arr.push("Cover")
     for (let i = 1; i <= 10; i++) arr.push(`Paragraph ${i}`)
@@ -24,38 +25,38 @@ export function ImagePrompts({ sipId: sipIdProp }) {
 
   useEffect(() => {
     if (!sipId) return
-    loadPrompts()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sipId])
+    let cancelled = false
 
-  async function loadPrompts() {
-    try {
-      setIsLoading(true)
-      setErrMsg("")
+    ;(async () => {
+      try {
+        setIsLoading(true)
+        setErrMsg("")
 
-      // 🔧 Change endpoint to your actual backend route
-      // Example: "imagePrompt/generate" => /api/imagePrompt/generate
-      const res = await httpService.post("images/generate", { sipId })
+        const res = await imagesService.generatePrompts(sipId)
 
-      if (!res?.prompts || !Array.isArray(res.prompts)) {
-        throw new Error("Invalid response from server (expected {prompts: []})")
+        if (!Array.isArray(res?.prompts)) {
+          throw new Error("Invalid response (expected { prompts: [] })")
+        }
+
+        if (!cancelled) setPrompts(res.prompts)
+      } catch (err) {
+        console.error(err)
+        if (!cancelled) setErrMsg("Failed to load/generate prompts.")
+      } finally {
+        if (!cancelled) setIsLoading(false)
       }
+    })()
 
-      setPrompts(res.prompts)
-    } catch (err) {
-      console.error("Failed loading prompts:", err)
-      setErrMsg("Failed to generate prompts. Check console + backend logs.")
-    } finally {
-      setIsLoading(false)
+    return () => {
+      cancelled = true
     }
-  }
+  }, [sipId])
 
   async function copyToClipboard(text) {
     try {
       await navigator.clipboard.writeText(text)
     } catch (err) {
       console.error("Clipboard copy failed:", err)
-      // Fallback (older browsers)
       const ta = document.createElement("textarea")
       ta.value = text
       document.body.appendChild(ta)
@@ -66,31 +67,149 @@ export function ImagePrompts({ sipId: sipIdProp }) {
   }
 
   async function onCopyAll() {
-    const joined = prompts.join("\n\n---\n\n")
-    await copyToClipboard(joined)
+    await copyToClipboard(prompts.join("\n\n---\n\n"))
+  }
+
+  async function onRegenerate() {
+    try {
+      setIsLoading(true)
+      setErrMsg("")
+
+      // only works if backend supports force (optional)
+      const res = await imagesService.generatePrompts(sipId, { force: true })
+
+      if (!Array.isArray(res?.prompts)) {
+        throw new Error("Invalid response (expected { prompts: [] })")
+      }
+
+      setPrompts(res.prompts)
+    } catch (err) {
+      console.error(err)
+      setErrMsg("Failed to regenerate prompts.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   if (!sipId) return <div>Missing sipId</div>
   if (isLoading) return <Loader text="Generating prompts..." />
+
   if (errMsg) {
     return (
       <section className="image-prompts">
         <h2>Midjourney Prompts</h2>
         <p style={{ color: "crimson" }}>{errMsg}</p>
-        <button onClick={loadPrompts}>Try again</button>
+        <button onClick={() => imagesService.generatePrompts(sipId).then(r => setPrompts(r.prompts)).catch(console.error)}>
+          Try again
+        </button>
       </section>
     )
   }
 
+//   const labels = useMemo(() => {
+//     // 13 prompts: 0 cover, 1-10 paragraphs, 11 wish, 12 back cover
+//     const arr = []
+//     arr.push("Cover")
+//     for (let i = 1; i <= 10; i++) arr.push(`Paragraph ${i}`)
+//     arr.push("Wish")
+//     arr.push("Back cover")
+//     return arr
+//   }, [])
+
+
+//   useEffect(() => {
+//     if (!sipId) return
+//     loadSip(sipId)
+//     if (!sip.prompts) run()
+    
+//     // loadPrompts()
+//     // charactersService.describe(sipId)
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [sipId])
+
+//   async function run() {
+//   try {
+//     setIsLoading(true)
+//     setErrMsg("")
+
+//     await charactersService.describe(sipId)
+//     await loadPrompts()
+
+//   } catch (err) {
+//     console.error(err)
+//     setErrMsg("Failed to describe characters / generate prompts.")
+//   } finally {
+//     setIsLoading(false)
+//   }
+// }
+
+//   async function loadPrompts() {
+//     try {
+//       // setIsLoading(true)
+//       setErrMsg("")
+
+//       // 🔧 Change endpoint to your actual backend route
+//       // Example: "imagePrompt/generate" => /api/imagePrompt/generate
+//       const res = await httpService.post("images/generate", { sipId })
+
+//       if (!res?.prompts || !Array.isArray(res.prompts)) {
+//         throw new Error("Invalid response from server (expected {prompts: []})")
+//       }
+
+//       setPrompts(res.prompts)
+//     } catch (err) {
+//       console.error("Failed loading prompts:", err)
+//       setErrMsg("Failed to generate prompts. Check console + backend logs.")
+//     } finally {
+//       // setIsLoading(false)
+//     }
+//   }
+
+//   async function copyToClipboard(text) {
+//     try {
+//       await navigator.clipboard.writeText(text)
+//     } catch (err) {
+//       console.error("Clipboard copy failed:", err)
+//       // Fallback (older browsers)
+//       const ta = document.createElement("textarea")
+//       ta.value = text
+//       document.body.appendChild(ta)
+//       ta.select()
+//       document.execCommand("copy")
+//       document.body.removeChild(ta)
+//     }
+//   }
+
+//   async function onCopyAll() {
+//     const joined = prompts.join("\n\n---\n\n")
+//     await copyToClipboard(joined)
+//   }
+
+//   if (!sipId) return <div>Missing sipId</div>
+//   if (isLoading) return <Loader text="Generating prompts..." />
+//   if (errMsg) {
+//     return (
+//       <section className="image-prompts">
+//         <h2>Midjourney Prompts</h2>
+//         <p style={{ color: "crimson" }}>{errMsg}</p>
+//         <button onClick={loadPrompts}>Try again</button>
+//       </section>
+//     )
+//   }
+
+
+
   
 
   return (
-    <section className="image-prompts">
+   <section className="image-prompts">
       <header style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <h2 style={{ margin: 0 }}>Midjourney Prompts</h2>
-        <button type="button" onClick={loadPrompts}>
+
+        <button type="button" onClick={onRegenerate} disabled={!sipId}>
           Regenerate
         </button>
+
         <button type="button" onClick={onCopyAll} disabled={!prompts.length}>
           Copy all
         </button>
@@ -112,6 +231,33 @@ export function ImagePrompts({ sipId: sipIdProp }) {
         </div>
       )}
     </section>
+    // <section className="image-prompts">
+    //   <header style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+    //     <h2 style={{ margin: 0 }}>Midjourney Prompts</h2>
+    //     <button type="button" onClick={loadPrompts}>
+    //       Regenerate
+    //     </button>
+    //     <button type="button" onClick={onCopyAll} disabled={!prompts.length}>
+    //       Copy all
+    //     </button>
+    //   </header>
+
+    //   {!prompts.length ? (
+    //     <p>No prompts yet.</p>
+    //   ) : (
+    //     <div style={{ display: "grid", gap: "14px", marginTop: "16px" }}>
+    //       {prompts.map((prompt, idx) => (
+    //         <PromptCard
+    //           key={idx}
+    //           idx={idx}
+    //           label={labels[idx] || `Prompt ${idx + 1}`}
+    //           prompt={prompt}
+    //           onCopy={copyToClipboard}
+    //         />
+    //       ))}
+    //     </div>
+    //   )}
+    // </section>
   )
 }
 

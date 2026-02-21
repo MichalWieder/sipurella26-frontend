@@ -16,6 +16,8 @@ export function FormComplete () {
 const isLoading = useSelector(storeState => storeState.systemModule.isLoading)
 const sip = useSelector(state => state.sipModule.sip)    
 const { sipId } = useParams()
+const isStoryReady = Array.isArray(sip?.story) && sip.story.length >= 10;
+
 
 const dispatch = useDispatch()
 
@@ -28,7 +30,7 @@ useEffect(() => {
 
 useEffect(() => {
     generateStory()
-}, [sip])
+}, [sip?._id, sip?.story])
 
 
  async function generateStory() {
@@ -47,6 +49,7 @@ useEffect(() => {
     }
 }
 
+
 if (!sip || isLoading) return <Loader text="בונים את הסיפורלה שלך..." />
 
   return (
@@ -63,8 +66,14 @@ if (!sip || isLoading) return <Loader text="בונים את הסיפורלה ש�
             ))}
         </div>
 
+        {isStoryReady ? (
+            <ImagePrompts sipId={sip._id} />
+            ) : (
+            <Loader text="בונים את הסיפורלה שלך..." />
+            )}
 
-        <ImagePrompts sipId={sip.Id}/>
+
+        {/* <ImagePrompts/> */}
     </section>
   )
 }

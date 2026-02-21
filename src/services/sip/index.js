@@ -26,7 +26,8 @@ function getEmptySip() {
 		],
         wish: '',
         backCover: '',
-        imgs: []
+        imgs: [],
+		prompts: []
 	}
 }
 
