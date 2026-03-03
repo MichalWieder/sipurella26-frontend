@@ -35,6 +35,7 @@ export async function login(credentials) {
             user
         })
         socketService.login(user._id)
+        console.log('user', user)
         return user
     } catch (err) {
         console.log('Cannot login', err)

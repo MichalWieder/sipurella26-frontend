@@ -3,13 +3,14 @@
     border-radius: 12px;
     padding: 12px;
     background: white;
-    height: 20rem;
+    height: 25rem;
     
     font-size: 1rem;
     align-content: center;
     justify-self: center;
     font-weight: bold;
     margin: 1rem;
+    overflow-y: hidden;
 
     .card-wrapper{
         display: flex;
@@ -30,7 +31,6 @@
     }
 
     textarea{
-        width: 100%;
         resize: vertical;
         padding: 10px;
         border-radius: 10px;
@@ -40,6 +40,6 @@
         letter-spacing: 3px;
         line-height: 1.35;
         height: 15rem;
-        width: 25rem;
+        width: 20rem;
     }
 }

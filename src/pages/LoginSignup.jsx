@@ -141,7 +141,7 @@ export function Signup() {
             <button>הרשמה</button>
 
             <p>כבר יש לך חשבון? 
-                <NavLink to="auth/login">אפשר ללחוץ כאן</NavLink>
+                <NavLink to="/auth/login">אפשר ללחוץ כאן</NavLink>
             </p>
         </form>
     )

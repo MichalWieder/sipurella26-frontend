@@ -7,6 +7,10 @@
         height: 4rem;
     }
 
+    .label{
+        color: black;
+    }
+
     .story-generate {
 
         button{

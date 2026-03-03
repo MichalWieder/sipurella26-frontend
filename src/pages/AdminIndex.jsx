@@ -11,7 +11,7 @@ export function AdminIndex() {
 	const isLoading = useSelector(storeState => storeState.userModule.isLoading)
 
 	useEffect(() => {
-        if(!user.isAdmin) navigate('/')
+        if(!user.role === 'user') navigate('/')
 		loadUsers()
 	}, [])
 

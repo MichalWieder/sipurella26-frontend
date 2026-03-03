@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
+import { useMatch } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 
 import { FormStep2_Questions } from './FormStep2_Questions.jsx'
+import { clearSipDraft } from '../services/util.service'
 
 const STORAGE_KEY = "form_step2"
 
 export function FormStep2 ({ onSubmit, addStepParam, back }) {
-  
+   const isNewForm = useMatch('/build/')
   // const { event } = data
   const [questions, setQuestions] = useState(
     ["איך הכרתם?", "איזה סוג של זוג אתם? מה מספרים עליכם", "מה התחביבים שלכם? (ביחד ולחוד)", "יש עוד משהו שהיית רוצה לשתף? שמות חיבה, בדיחות פרטיות, סיפורים מצחיקים"])
@@ -27,7 +29,9 @@ export function FormStep2 ({ onSubmit, addStepParam, back }) {
 
 
   useEffect(() => {
-            addStepParam()
+        addStepParam()
+        console.log('now!', isNewForm)
+        if (isNewForm) clearSipDraft()
     }, [])
 
   useEffect(() => {

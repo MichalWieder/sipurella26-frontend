@@ -27,10 +27,10 @@ export function AppHeader() {
 				<NavLink to="about">עלינו</NavLink>
 				<NavLink to="sip">דוגמאות</NavLink>
 				<NavLink to="chat">יצירת קשר</NavLink>
-				<NavLink to="build">לבנות סיפורלה</NavLink>
+				{user && <NavLink to="build">לבנות סיפורלה</NavLink>}
 				{/* <NavLink to="review">Review</NavLink> */}
 
-                {user?.isAdmin && <NavLink to="/admin">Admin</NavLink>}
+                {user?.role === 'admin' && <NavLink to="/admin">Admin</NavLink>}
 
 				{!user && <NavLink to="auth/signup" className="login-link">כניסה</NavLink>}
 				{user && (

@@ -33,7 +33,9 @@ async function ajax(endpoint, method = 'GET', data = null, config = {}) {
         const res = await axios(options)
         return res.data
     } catch (err) {
-        console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `, data)
+      const safeData = _sanitizeForLog(data)
+      console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `, safeData)
+        // console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `, data)
         console.dir(err)
         if (err.response && err.response.status === 401) {
             sessionStorage.clear()
@@ -41,4 +43,18 @@ async function ajax(endpoint, method = 'GET', data = null, config = {}) {
         }
         throw err
     }
+}
+
+function _sanitizeForLog(data) {
+  if (!data || typeof data !== 'object') return data
+
+  const clone = { ...data }
+
+  const sensitiveFields = ['password', 'token', 'accessToken', 'refreshToken']
+
+  sensitiveFields.forEach(field => {
+    if (clone[field]) clone[field] = '***REDACTED***'
+  })
+
+  return clone
 }

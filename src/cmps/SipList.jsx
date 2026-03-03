@@ -7,7 +7,7 @@ export function SipList({ sips, onRemoveSip, onUpdateSip }) {
         const user = userService.getLoggedinUser()
         
         if (!user) return false
-        if (user.isAdmin) return true
+        if (user.role === 'admin') return true
         return sip.owner?._id === user._id
     }
 

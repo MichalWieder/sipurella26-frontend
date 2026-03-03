@@ -8,7 +8,7 @@ export function ReviewList({ reviews, onRemoveReview }) {
         const user = userService.getLoggedinUser()
         
         if (!user) return false
-        if (user.isAdmin) return true
+        if (user.role === 'admin') return true
         return review.byUser?._id === user._id
     }
 
