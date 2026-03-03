@@ -1,11 +1,14 @@
 import { Switch } from '@mui/material'
 import { useReactMediaRecorder } from "react-media-recorder"
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import { uploadService } from "../services/upload.service"
 
 export function FormStep2_Questions ({ question, register, setValue, idx }) {
+  const loggedInUser = useSelector(storeState => storeState.userModule.user)
   const [recordingToggle, setRecordingToggle] = useState(true)
   const [previewUrl, setPreviewUrl] = useState("")
+  const fileInputRef = useRef(null)
 
   const textPath = `details.${idx}.text`
   const recordPath = `details.${idx}.recordUrl`
@@ -26,10 +29,32 @@ export function FormStep2_Questions ({ question, register, setValue, idx }) {
     },
   })
 
+    async function onSelectAudioFile(ev) {
+    const file = ev.target.files?.[0]
+    if (!file) return
+
+    // Preview locally
+    const localUrl = URL.createObjectURL(file)
+    setPreviewUrl(localUrl)
+
+    try {
+      const url = await uploadService.uploadAudio(file)
+      setValue(recordPath, url, { shouldDirty: true })
+      setValue(textPath, "", { shouldDirty: true })
+    } catch (err) {
+      console.error(err)
+      URL.revokeObjectURL(localUrl)
+      setPreviewUrl("")
+    } finally {
+      ev.target.value = ""
+    }
+  }
+
     async function onDeleteRecording() {
     try {
       setValue(recordPath, "", { shouldDirty: true }) 
       setPreviewUrl("")
+      if (fileInputRef.current) fileInputRef.current.value = ""
     } catch (err) {
       console.error("Failed to delete recording", err)
     }
@@ -56,6 +81,18 @@ export function FormStep2_Questions ({ question, register, setValue, idx }) {
     ? <div>
         <button type="button" onClick={startRecording}>Start</button>
         <button type="button" onClick={stopRecording}>Stop</button>
+
+        {/* Upload existing recording */}
+        {loggedInUser.role === 'admin' &&
+            <div className='audio-upload'>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="audio/ogg,audio/*"
+                onChange={onSelectAudioFile}
+              />
+            </div>
+          }
 
         {previewUrl && (
           <>

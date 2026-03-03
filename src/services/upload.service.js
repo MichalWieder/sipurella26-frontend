@@ -5,15 +5,24 @@ export const uploadService = {
   uploadImages,
 }
 
-// POST /api/upload/audio with field "file"
-async function uploadAudio(blob) {
-  const file = new File([blob], `audio-${Date.now()}.webm`, { type: blob.type })
-  
+async function uploadAudio(input) {
+  const isFile = input instanceof File
+
+  const mime = input.type || "audio/webm"
+  const ext =
+    mime.includes("ogg") ? "ogg" :
+    mime.includes("webm") ? "webm" :
+    mime.includes("mpeg") ? "mp3" :
+    "audio"
+
+  const file = isFile
+    ? input
+    : new File([input], `audio-${Date.now()}.${ext}`, { type: mime })
+
   const formData = new FormData()
   formData.append("file", file)
-  
+
   const res = await httpService.post("upload/audio", formData)
-  // backend returns: { url }
   return res.url
 }
 
