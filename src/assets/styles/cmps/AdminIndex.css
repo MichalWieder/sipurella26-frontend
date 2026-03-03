@@ -1,0 +1,8 @@
+.admin-index{
+    justify-self: center;
+    
+    ul li {
+        display: flex;
+        gap: 1rem;
+    }
+}

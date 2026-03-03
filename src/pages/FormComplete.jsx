@@ -15,6 +15,7 @@ import { ImagePrompts } from "../cmps/ImagePrompts.jsx"
 
 
 export function FormComplete () {
+const loggedInUser = useSelector(storeState => storeState.userModule.user)
 const isLoading = useSelector(storeState => storeState.systemModule.isLoading)
 const sip = useSelector(state => state.sipModule.sip)    
 const { sipId } = useParams()
@@ -133,12 +134,17 @@ async function onSaveStory() {
 }
 
 
-if (!sip || isLoading) return <Loader text="בונים את הסיפורלה שלך..." />
+if ((!sip || isLoading) && loggedInUser.role === 'admin') return <Loader text="בונים את הסיפורלה שלך..." />
 
   return (
-    <section className='form-complete'>
-
-      {/* <button onClick={onClickTest}>Test</button> */}
+    <>
+    {loggedInUser.role === 'user'
+      ? <div>
+        <h2>הסיפורלה נשלח להכנה</h2>
+      </div>
+      : (
+      <section className='form-complete'>
+      
        <div className='story-generate'>
         <header>
         <h1>{sip.receiverName}</h1>
@@ -199,5 +205,8 @@ if (!sip || isLoading) return <Loader text="בונים את הסיפורלה ש�
         }
 
     </section>
+    )
+    }
+    </>
   )
 }

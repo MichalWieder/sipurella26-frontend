@@ -76,7 +76,7 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
     clearSipDraft()
     
     dispatch({type: LOADING_DONE})
-    navigate(`/complete/`)
+    navigate(`/complete/112`)
     // navigate(`/complete/${sip._id}`)
   }
 

@@ -30,7 +30,7 @@ export function AppHeader() {
 				{user && <NavLink to="build">לבנות סיפורלה</NavLink>}
 				{/* <NavLink to="review">Review</NavLink> */}
 
-                {user?.role === 'admin' && <NavLink to="/admin">Admin</NavLink>}
+                {user?.role === 'admin' && <NavLink to="/admin">ניהול סיפורלות</NavLink>}
 
 				{!user && <NavLink to="auth/signup" className="login-link">כניסה</NavLink>}
 				{user && (

@@ -1,30 +1,34 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { loadUsers, removeUser } from '../store/actions/user.actions'
+import { NavLink } from 'react-router-dom'
+import { loadSips } from '../store/actions/sip.actions'
 import { useNavigate } from 'react-router'
 
 export function AdminIndex() {
     const navigate = useNavigate()
 
-	const user = useSelector(storeState => storeState.userModule.user)
-	const users = useSelector(storeState => storeState.userModule.users)
+	const loggedInUser = useSelector(storeState => storeState.userModule.user)
+	const sips = useSelector(storeState => storeState.sipModule.sips)
 	const isLoading = useSelector(storeState => storeState.userModule.isLoading)
 
 	useEffect(() => {
-        if(!user.role === 'user') navigate('/')
-		loadUsers()
+        if(!loggedInUser.role === 'user') navigate('/')
+        loadSips()
 	}, [])
 
-	return <section className="admin">
-        {isLoading && 'Loading...'}
-        {users && (
+	return <section className="admin-index">
+
+        {/* <div>{JSON.stringify(sips, null, 2)}</div> */}
+        {sips && (
             <ul>
-                {users.map(user => (
-                    <li key={user._id}>
-                        <pre>{JSON.stringify(user, null, 2)}</pre>
-                        <button onClick={() => removeUser(user._id)}>
-                            Remove {user.username}
-                        </button>
+                {sips.map(sip => (
+                    <li key={sip._id}>
+                        <p>{sip.giverName}</p>
+                        <p>{sip.email}</p>
+                        <p>{sip.receiverName}</p>
+                        <p>{sip.charactersCount}</p>
+                        <p>{sip.event}</p>
+                        <NavLink to={`/complete/${sip._id}`}>לסיפור המלא</NavLink>
                     </li>
                 ))}
             </ul>
