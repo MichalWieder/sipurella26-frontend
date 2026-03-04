@@ -30,7 +30,3 @@
 @import "cmps/sip/SipPreview";
 @import "cmps/sip/SipFilter";
 @import "cmps/sip/CardPreview";
-
-@import "cmps/review/ReviewEdit";
-@import "cmps/review/ReviewList";
-@import "cmps/review/ReviewPreview";

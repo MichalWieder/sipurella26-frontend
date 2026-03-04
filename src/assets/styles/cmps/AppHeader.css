@@ -3,6 +3,8 @@
     min-height: 3.5rem;
 
     padding: .8rem 1rem;
+    background-color: var(--clr1);
+    color: var(--clr-white);
     
     
     & nav {
@@ -16,7 +18,7 @@
         letter-spacing: 5px;
 
         .active {
-            color: var(--clr-white);
+            color: var(--clr6);
         }
 
         .logo {

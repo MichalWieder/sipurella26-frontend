@@ -9,8 +9,8 @@ body {
         font-family: 'karantina-light';
     letter-spacing: 4px;
     font-size: 20px;
-    color: var(--clr-white);
-    background-color: var(--clr1);
+    color: var(--clr1);
+    background-color: var(--clr6);
 }
 
 h1, h2, h3, h4, h5, h6 {

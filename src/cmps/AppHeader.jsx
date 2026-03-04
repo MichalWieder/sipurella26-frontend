@@ -28,7 +28,6 @@ export function AppHeader() {
 				<NavLink to="sip">דוגמאות</NavLink>
 				<NavLink to="chat">יצירת קשר</NavLink>
 				{user && <NavLink to="build">לבנות סיפורלה</NavLink>}
-				{/* <NavLink to="review">Review</NavLink> */}
 
                 {user?.role === 'admin' && <NavLink to="/admin">ניהול סיפורלות</NavLink>}
 

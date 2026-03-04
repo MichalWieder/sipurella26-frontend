@@ -23,7 +23,7 @@ export function AdminIndex() {
             <ul>
                 {sips.map(sip => (
                     <li key={sip._id}>
-                        <p>{sip.createdAt}</p>
+                        {sip.createdAt && <p>{new Date(sip.createdAt).toLocaleString()}</p>}
                         <p>{sip.giverName}</p>
                         <p>{sip.email}</p>
                         <p>{sip.receiverName}</p>

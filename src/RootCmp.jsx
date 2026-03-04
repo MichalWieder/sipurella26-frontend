@@ -4,7 +4,6 @@ import { Routes, Route } from 'react-router'
 import { HomePage } from './pages/HomePage'
 import { AboutUs } from './pages/AboutUs'
 import { SipIndex } from './pages/SipIndex.jsx'
-import { ReviewIndex } from './pages/ReviewIndex.jsx'
 import { ChatApp } from './pages/Chat.jsx'
 import { AdminIndex } from './pages/AdminIndex.jsx'
 
@@ -35,7 +34,6 @@ export function RootCmp() {
                     <Route path="sip/:sipId" element={<SipDetails />} />
                     <Route path="user/:id" element={<UserDetails />} />
                     <Route path="user/:userId" element={<UserDetails />} />
-                    <Route path="review" element={<ReviewIndex />} />
                     <Route path="chat" element={<ChatApp />} />
                     <Route path="admin" element={<AdminIndex />} />
                     <Route path="auth" element={<LoginSignup />} />

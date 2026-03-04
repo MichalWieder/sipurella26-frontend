@@ -5,6 +5,7 @@ export const uploadService = {
   uploadImages,
 }
 
+// POST /api/upload/audio with field "file"
 async function uploadAudio(input) {
   const isFile = input instanceof File
 
