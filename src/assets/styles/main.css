@@ -10,6 +10,7 @@
 @import "RootCmp";
 
 @import "cmps/AboutUs";
+@import "cmps/ContactUs";
 @import "cmps/HomePage";
 @import "cmps/UserDetails";
 @import "cmps/LoginSignup";

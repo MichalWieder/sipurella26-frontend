@@ -7,12 +7,14 @@ export const SET_USER = 'SET_USER'
 export const SET_WATCHED_USER = 'SET_WATCHED_USER'
 export const REMOVE_USER = 'REMOVE_USER'
 export const SET_USERS = 'SET_USERS'
+export const ADD_REQUEST = 'ADD_REQUEST'
 
 const initialState = {
     count: 10,
     user: userService.getLoggedinUser(),
     users: [],
-    watchedUser : null
+    watchedUser : null,
+    userRequests: []
 }
 
 export function userReducer(state = initialState, action) {
@@ -41,6 +43,10 @@ export function userReducer(state = initialState, action) {
             break
         case SET_USERS:
             newState = { ...state, users: action.users }
+            break
+        case ADD_REQUEST:
+            newState = { ...state, userRequests: [...state.userRequests, action.userRequests]
+        }
             break
         default:
     }

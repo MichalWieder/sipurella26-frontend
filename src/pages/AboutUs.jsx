@@ -1,8 +1,4 @@
-import React, { useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
-
 export function AboutUs() {
-    const [count, setCount] = useState(100)
 
     return (
         <section>

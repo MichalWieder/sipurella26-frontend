@@ -26,7 +26,7 @@ export function AppHeader() {
 				</NavLink>
 				<NavLink to="about">עלינו</NavLink>
 				<NavLink to="sip">דוגמאות</NavLink>
-				<NavLink to="chat">יצירת קשר</NavLink>
+				<NavLink to="contact">יצירת קשר</NavLink>
 				{user && <NavLink to="build">לבנות סיפורלה</NavLink>}
 
                 {user?.role === 'admin' && <NavLink to="/admin">ניהול סיפורלות</NavLink>}
