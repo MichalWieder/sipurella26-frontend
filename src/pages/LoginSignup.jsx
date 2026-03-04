@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 
 import { useState, useEffect } from 'react'
 
-import { userService } from '../services/user'
+import { userService } from '../services/user.service'
 import { login, signup } from '../store/actions/user.actions'
 // import { ImgUploader } from '../cmps/ImgUploader'
 

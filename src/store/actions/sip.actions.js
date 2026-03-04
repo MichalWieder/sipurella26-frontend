@@ -1,4 +1,4 @@
-import { sipService } from '../../services/sip'
+import { sipService } from '../../services/sip.service'
 import { store } from '../store'
 import { ADD_SIP, REMOVE_SIP, SET_SIPS, SET_SIP, UPDATE_SIP } from '../reducers/sip.reducer'
 

@@ -1,4 +1,4 @@
-import { httpService } from '../http.service'
+import { httpService } from './http.service'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 
@@ -12,6 +12,7 @@ export const userService = {
 	update,
     getLoggedinUser,
     saveLoggedinUser,
+	getEmptyUser
 }
 
 function getUsers() {
@@ -67,4 +68,14 @@ function saveLoggedinUser(user) {
     }
 	sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
 	return user
+}
+
+function getEmptyUser() {
+    return {
+        username: '', 
+        password: '', 
+        fullname: '',
+        email: '',
+        role: 'user',
+    }
 }
