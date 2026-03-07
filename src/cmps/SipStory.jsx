@@ -70,32 +70,32 @@ async function onSaveStory() {
       </header>
 
         <CardPreview
-                idx={0}
-                label={labels[0]}
-                text={`הסיפור של ${sip.receiverName}`}
-                onCopy={copyToClipboard}
-                onChange={handleParagraphChange}
+          idx={0}
+          label={labels[0]}
+          text={`הסיפור של ${sip.receiverName}`}
+          onCopy={copyToClipboard}
+          onChange={handleParagraphChange}
         />
         {Array.isArray(sip.story) &&          
             storyDraft.map((paragraph, idx) => (
 
         <CardPreview
-            key={idx}
-            idx={idx}
-            label={labels[idx + 1]}
-            text={paragraph}
-            onCopy={copyToClipboard}
-            onChange={handleParagraphChange}
+          key={idx}
+          idx={idx}
+          label={labels[idx + 1]}
+          text={paragraph}
+          onCopy={copyToClipboard}
+          onChange={handleParagraphChange}
         />
         ))
            }
 
         <CardPreview
-            idx={12}
-            label={labels[12]}
-            text={sip.backCover}
-            onCopy={copyToClipboard}
-            onChange={handleParagraphChange}
+          idx={12}
+          label={labels[12]}
+          text={sip.backCover}
+          onCopy={copyToClipboard}
+          onChange={handleParagraphChange}
         />
         </div>
     )

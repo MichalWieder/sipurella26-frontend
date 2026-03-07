@@ -23,6 +23,7 @@ const { sipId } = useParams()
 const isStoryReady = Array.isArray(sip?.story) && sip.story.length >= 10
 const [storyDraft, setStoryDraft] = useState([])
 const [isMidjourney, setIsMidjourney] = useState(true)
+const [generatorType, setGeneratorType] = useState('midjourney')
 
 
 const dispatch = useDispatch()
@@ -40,6 +41,12 @@ useEffect(() => {
   if (!sipId) return
   runCompletionFlow()
 }, [sipId, isMidjourney])
+
+  useEffect(() => {
+  if (generatorType === 'midjourney') {
+    setIsMidjourney(true)
+  } else setIsMidjourney(false)
+  }, [generatorType])
 
 
 useEffect(() => {
@@ -75,11 +82,17 @@ async function runCompletionFlow() {
       currentSip = await generateStory()
     }
 
-    if (needsPrompts) {
-      await generatePrompts(isMidjourney)
-      currentSip = await sipService.getById(sipId)
-      dispatch({ type: SET_SIP, sip: currentSip })
-    }
+    await generatePrompts(true) 
+    await generatePrompts(false)
+
+    currentSip = await sipService.getById(sipId)
+    dispatch({ type: SET_SIP, sip: currentSip })
+
+    // if (needsPrompts) {
+    //   await generatePrompts(isMidjourney)
+    //   currentSip = await sipService.getById(sipId)
+    //   dispatch({ type: SET_SIP, sip: currentSip })
+    // }
 
     clearSipDraft()
   } catch (err) {
@@ -135,10 +148,12 @@ async function copyToClipboard(text) {
     }
   }
 
+function onSelectGenerator(ev) {
+  setGeneratorType(ev.target.value)
+}
 
 
-
-if ((!sip || isLoading) && loggedInUser.role === 'admin') return <Loader text="בונים את הסיפורלה שלך..." />
+if ((!sip || isLoading) && loggedInUser.role === 'admin') return <Loader text="בונים את הסיפורלה..." />
 
   return (
     <section className='form-complete'>
@@ -153,10 +168,15 @@ if ((!sip || isLoading) && loggedInUser.role === 'admin') return <Loader text="�
         {isStoryReady 
             ? <>
                 <SipStory sip={sip} storyDraft={storyDraft} copyToClipboard={copyToClipboard} labels={labels} handleParagraphChange={handleParagraphChange} />
-                <SipPrompts sipId={sip._id} copyToClipboard={copyToClipboard} labels={labels} isMidjourney={true} />
-                <SipPrompts sipId={sip._id} copyToClipboard={copyToClipboard} labels={labels} isMidjourney={false} />
+                <div>
+                    <select name="generatorType" defaultValue={generatorType} onChange={(ev) => onSelectGenerator(ev)}>
+                      <option value="midjourney">Midjorney</option>
+                      <option value="recraft">Recraft</option>
+                    </select>
+                </div>
+                <SipPrompts sipId={sip._id} copyToClipboard={copyToClipboard} labels={labels} isMidjourney={isMidjourney}/>
               </>
-            : <Loader text="בונים את הסיפורלה שלך..." />
+            : <Loader text="בונים את הסיפורלה..." />
         }
 
     </>

@@ -107,7 +107,7 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
         }
   }
 
-  if (isLoading) return <Loader />
+  if (isLoading) return <Loader text='מגישים את הטופס'/>
 
     return (
       <section className="container user-form">
