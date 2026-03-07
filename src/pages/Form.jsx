@@ -14,15 +14,8 @@ export function Form () {
   return saved || 1
 })
   const sip = useSelector(storeState => storeState.sipModule.sip)
-  // const sips = useSelector(storeState => storeState.sipModule.sips)
   const [formData, setFormData] = useState({eventType: ''})
   const [searchParams, setSearchParams] = useSearchParams()
-
-
-  //   useEffect(() => {
-  //     loadSips()
-  // }, [])
-
 
   useEffect(() => {
     localStorage.setItem("form_step", String(step))
@@ -33,21 +26,23 @@ export function Form () {
   const prevStep = () => setStep((s) => s - 1)
 
   async function handleStepSubmit(data) {
-    // setFormData((prev) => ({ ...prev, ...data }))
-    if (step === 1) await addSip({...data, createdAt: Date.now()})
-    else {await updateSip({...sip, ...data,})}
+  let savedSip
 
-    console.log('sip', sip)
-    console.log('step', step)
-    nextStep()
+  if (step === 1) {
+    savedSip = await addSip({ ...data, createdAt: Date.now() })
+  } else {
+    savedSip = await updateSip({ ...sip, ...data })
   }
+
+    nextStep()
+  return savedSip
+}
 
   function addStepParam() {
     const newParams = new URLSearchParams(searchParams)
     newParams.set('step', step)
     setSearchParams(newParams)
   }
-
 
   return (
     <section  className='form'>

@@ -3,8 +3,6 @@ export const SET_SIP = 'SET_SIP'
 export const REMOVE_SIP = 'REMOVE_SIP'
 export const ADD_SIP = 'ADD_SIP'
 export const UPDATE_SIP = 'UPDATE_SIP'
-// export const ADD_SIP_MSG = 'ADD_SIP_MSG'
-// export const Ad = 'Ad'
 
 const initialState = {
     sips: [],

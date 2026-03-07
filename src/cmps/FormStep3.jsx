@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect } from "react"
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 
 import { uploadService } from "../services/upload.service"
+import { imagesService } from "../services/images.service"
+import { storyService } from '../services/story.service.js'
 import { LOADING_START, LOADING_DONE } from '../store/reducers/system.reducer'
-import { clearSipDraft } from '../services/util.service'
+import { SET_SIP } from '../store/reducers/sip.reducer.js'
 
 import { Loader } from "./Loader"
 import { ImgUploader } from "./ImgUploader"
@@ -19,6 +21,7 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
   const [characterImgs, setCharacterImgs] = useState({})
   const [generalImgs, setGeneralImgs] = useState([])
   const [isUploading, setIsUploading] = useState(false)
+  const [isMidjourney, setIsMidjourney] = useState(true)
 
   const buildDefaultCharacters = (count = 2) =>
   Array.from({ length: count }, (_, i) => ({
@@ -34,9 +37,7 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
   backCover: "",
   characters: buildDefaultCharacters(sip?.charactersCount || 2)
 }
-  const { register, handleSubmit, setValue, watch } = useForm({defaultValues})
-
-
+  const { register, handleSubmit, watch } = useForm({defaultValues})
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -73,18 +74,43 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
 
     await onSubmit({ ...data, imgs: generalImgUrls, characters: updatedCharacters })
 
-    clearSipDraft()
+    // clearSipDraft()
     
     dispatch({type: LOADING_DONE})
-    navigate(`/complete/`)
-    // navigate(`/complete/${sip._id}`)
+    // navigate(`/complete/`)
+    navigate(`/complete/${sip._id}`)
   }
 
-  
-// if (isLoading) return <Loader />
+
+ async function generateStory(sipId) {
+    if (!sipId) throw new Error("Missing sipId for story generation")
+    try {
+        const updateSip = await storyService.generate(sipId)
+        dispatch({ type: SET_SIP, sip: updateSip })
+        return updateSip
+    } catch (err) {
+        console.error("Story generation failed", err)
+        throw err
+    }
+}
+
+  async function generatePrompts(sipId, isMidjourney){
+    try {
+        const res = await imagesService.generatePrompts(sipId, isMidjourney)
+         if (!Array.isArray(res?.prompts)) {
+          throw new Error("Invalid response (expected { prompts: [] })")
+        }  
+        return res.prompts
+        } catch (err) {
+            console.error("Prompt generation failed", err)
+            throw err
+        }
+  }
+
+  if (isLoading) return <Loader />
 
     return (
- <section className="container user-form">
+      <section className="container user-form">
       <h1>Final Step</h1>
 
       <form onSubmit={handleSubmit(onFinalSubmit)}>
@@ -103,9 +129,8 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
           />
         </div>
 
-        {isLoading 
-          ? <Loader />
-          : <>
+        
+          <>
         {watch("characters")?.map((char, idx) => (
           <div key={char.id}>
             <h2>Character {idx + 1}</h2>
@@ -134,8 +159,6 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
               limit={20}
             />
         </>
-        }
-
         
         <button type="submit" disabled={isUploading}>
           {isUploading ? "מעלה..." : "שליחה"}
@@ -147,6 +170,7 @@ export function FormStep3 ({ onSubmit, addStepParam, back }) {
           </button>
         )}
       </form>
+
     </section>
     )
 

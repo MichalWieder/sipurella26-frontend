@@ -30,7 +30,6 @@ export function FormStep2 ({ onSubmit, addStepParam, back }) {
 
   useEffect(() => {
         addStepParam()
-        console.log('now!', isNewForm)
         if (isNewForm) clearSipDraft()
     }, [])
 

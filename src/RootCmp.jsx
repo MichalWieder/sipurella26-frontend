@@ -14,7 +14,7 @@ import { UserDetails } from './pages/UserDetails'
 import { AppHeader } from './cmps/AppHeader'
 import { AppFooter } from './cmps/AppFooter'
 import { UserMsg } from './cmps/UserMsg.jsx'
-import { ImagePrompts } from './cmps/ImagePrompts.jsx'
+import { SipPrompts } from './cmps/SipPrompts.jsx'
 import { LoginSignup, Login, Signup } from './pages/LoginSignup.jsx'
 import { Form } from './pages/Form.jsx'
 import { FormComplete } from './pages/FormComplete.jsx'
@@ -41,7 +41,7 @@ export function RootCmp() {
                     <Route path="auth" element={<LoginSignup />} />
                     <Route path="build" element={<Form />} />
                     <Route path="complete/:sipId" element={<FormComplete />} />
-                    <Route path="complete/:sipId/prompts" element={<ImagePrompts />} />
+                    <Route path="complete/:sipId/prompts" element={<SipPrompts />} />
                     <Route path="auth/login" element={<Login />} />
                     <Route path="auth/signup" element={<Signup />} />
                 </Routes>
